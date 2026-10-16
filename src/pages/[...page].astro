@@ -1,0 +1,20 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+// Une page par fichier de « contenu/pages ». accueil.md devient la racine du site.
+export async function getStaticPaths() {
+  const pages = await getCollection('pages');
+  return pages.map((entree) => ({
+    params: { page: entree.id === 'accueil' ? undefined : entree.id },
+    props: { entree },
+  }));
+}
+
+const { entree } = Astro.props;
+const { Content } = await render(entree);
+---
+
+<Base titre={entree.data.titre} description={entree.data.description}>
+  <Content />
+</Base>

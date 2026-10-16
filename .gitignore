@@ -1,0 +1,20 @@
+# Fichiers générés
+dist/
+.astro/
+
+# Dépendances
+node_modules/
+
+# Journaux
+npm-debug.log*
+
+# Variables d'environnement
+.env
+.env.*
+
+# Outils locaux
+.claude/
+
+# Système
+.DS_Store
+Thumbs.db
