@@ -15,6 +15,10 @@ const { entree } = Astro.props;
 const { Content } = await render(entree);
 ---
 
-<Base titre={entree.data.titre} description={entree.data.description}>
+<Base
+  titre={entree.data.titre}
+  description={entree.data.description}
+  accueil={entree.id === 'accueil'}
+>
   <Content />
 </Base>

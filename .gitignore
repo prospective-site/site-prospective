@@ -18,3 +18,8 @@ npm-debug.log*
 # Système
 .DS_Store
 Thumbs.db
+
+# Matériaux de travail (non publiés)
+_sources/
+Claude outputs/
+CLAUDE.md

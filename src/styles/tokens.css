@@ -1,0 +1,64 @@
+/*
+  Valeurs de design dérivées de _sources/design-system/tokens.json.
+  C'est la seule source des couleurs, tailles et espacements du site :
+  ne jamais écrire une couleur ou un espacement en dur ailleurs.
+*/
+:root {
+  /* Couleurs — règles de contraste : voir tokens.json */
+  --noir: #000000;
+  --vert-menthe: #63bb8b; /* jamais en texte sur blanc */
+  --vert-eau: #95d1af; /* fonds d'encadrés, texte noir */
+  --bleu-nuit: #2e1c8a; /* titres forts ; fond des sections de rupture */
+  --bleu: #5334e9; /* accents et liens */
+  --beige: #fce2b6; /* vigilance, jamais en texte sur blanc */
+  --blanc: #ffffff;
+
+  --fond: var(--blanc);
+  --texte: var(--noir);
+  --fond-rupture: var(--bleu-nuit);
+  --accent: var(--bleu);
+  --vigilance: var(--beige);
+
+  /* Teintes pâles dérivées de la palette, pour les fonds de section des leviers.
+     Le bleu (liens, étiquettes) y garde un contraste d'environ 5,7:1. */
+  --bleu-pale: color-mix(in srgb, var(--bleu) 12%, var(--blanc)); /* levier 1 */
+  --vert-pale: color-mix(in srgb, var(--vert-eau) 35%, var(--blanc)); /* levier 2 */
+  --beige-pale: color-mix(in srgb, var(--beige) 55%, var(--blanc)); /* catalogue, 3e colonne */
+  --bleu-sombre: color-mix(in srgb, var(--bleu) 72%, var(--noir)); /* quadrants (Démarche), texte blanc */
+
+  /* Filet neutre : le noir atténué, pas une nouvelle couleur */
+  --filet: color-mix(in srgb, var(--noir) 14%, transparent);
+
+  /* Typographie — styles doc-* ajustés à l'écran */
+  --police: Poppins, Montserrat, system-ui, sans-serif;
+  --graisse-legere: 300;
+  --graisse-normale: 400;
+  --graisse-titre: 600;
+  --taille-titre: clamp(2rem, 1.55rem + 1.9vw, 2.875rem); /* doc-titre 32px → titre 46px */
+  --taille-sous-titre: clamp(1.5rem, 1.3rem + 0.85vw, 2rem); /* 24px → sous-titre 32px */
+  --taille-intertitre: 1.25rem; /* doc-intertitre 20px */
+  --taille-corps: clamp(1rem, 0.97rem + 0.15vw, 1.0625rem); /* doc-corps 16px → 17px */
+  --taille-legende: 0.8125rem; /* doc-legende 13px */
+
+  /* Espacements (multiples de 8px) */
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 2rem;
+  --space-4: 4rem;
+
+  /* Rayons */
+  --radius-sm: 4px;
+  --radius-md: 12px;
+  --radius-lg: 24px;
+
+  /* Mise en page */
+  --largeur: 72rem;
+  --mesure: 42rem; /* longueur de ligne confortable pour la lecture */
+  --gouttiere: var(--space-2);
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --gouttiere: var(--space-3);
+  }
+}

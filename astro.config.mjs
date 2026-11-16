@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import { satteri } from '@astrojs/markdown-satteri';
 import prefixeBase from './src/plugins/prefixe-base.mjs';
+import blocs, { imagesLegeres } from './src/plugins/blocs.mjs';
 
 // ─────────────────────────────────────────────────────────────
 //  ADRESSE DU SITE — les deux seules lignes à changer le jour où
@@ -23,6 +24,11 @@ export default defineConfig({
   markdown: {
     // Permet d'écrire les liens dans les fichiers Markdown sans se
     // soucier de BASE : « /pdf/brochure.pdf » fonctionne partout.
-    processor: satteri({ hastPlugins: [prefixeBase(BASE)] }),
+    // Les blocs « ::: » (sections, cartes, boutons) : voir README.
+    processor: satteri({
+      features: { directive: true },
+      mdastPlugins: [blocs()],
+      hastPlugins: [prefixeBase(BASE), imagesLegeres()],
+    }),
   },
 });

@@ -1,171 +1,333 @@
 ---
 import { getCollection } from 'astro:content';
+import { NOM, RENDEZVOUS, COURRIELS } from '../reglages.mjs';
+
+// Police Poppins auto-hébergée : trois graisses seulement.
+import '@fontsource/poppins/300.css';
+import '@fontsource/poppins/400.css';
+import '@fontsource/poppins/600.css';
+import '../styles/tokens.css';
+import '../styles/site.css';
 
 interface Props {
   titre: string;
   description?: string;
+  accueil?: boolean;
 }
 
-const { titre, description } = Astro.props;
+const { titre, description, accueil = false } = Astro.props;
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const lien = (id: string) => (id === 'accueil' ? `${base}/` : `${base}/${id}/`);
+const actuelle = Astro.url.pathname.replace(/\/?$/, '/');
 
-const menu = (await getCollection('pages'))
+// Menu : les pages qui ont un « ordre ». Celles qui partagent un « groupe »
+// forment un sous-menu, placé à la position de sa première page.
+const pages = await getCollection('pages');
+const enMenu = pages
   .filter((page) => page.data.ordre !== undefined)
   .sort((a, b) => a.data.ordre! - b.data.ordre!);
 
-const actuelle = Astro.url.pathname.replace(/\/?$/, '/');
+type Entree = { titre: string; href: string };
+type Element = Entree | { groupe: string; pages: Entree[] };
+const menu: Element[] = [];
+for (const page of enMenu) {
+  const entree = { titre: page.data.menu ?? page.data.titre, href: lien(page.id) };
+  const groupe = page.data.groupe;
+  if (!groupe) {
+    menu.push(entree);
+    continue;
+  }
+  const existant = menu.find((e) => 'groupe' in e && e.groupe === groupe);
+  if (existant && 'groupe' in existant) existant.pages.push(entree);
+  else menu.push({ groupe, pages: [entree] });
+}
+
+// Pied de page : le premier sous-menu (Expertises) a sa colonne ; toutes les
+// autres pages du menu sont réunies sous « Le cabinet ».
+const expertises = menu.find((e) => 'groupe' in e) as { groupe: string; pages: Entree[] } | undefined;
+const autres = menu
+  .filter((e) => e !== expertises)
+  .flatMap((e) => ('groupe' in e ? e.pages : [e]));
+const titreOnglet = accueil ? `${NOM} — ${titre}` : `${titre} | ${NOM}`;
 ---
 
 <!doctype html>
-<html lang="fr">
+<html lang="fr-CA" class="no-js">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{titre}</title>
+    <title>{titreOnglet}</title>
     {description && <meta name="description" content={description} />}
+    <meta property="og:title" content={titreOnglet} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:locale" content="fr_CA" />
+    <link rel="icon" type="image/png" href={`${base}/favicon.png`} />
+    <script is:inline>
+      document.documentElement.classList.replace('no-js', 'js');
+    </script>
   </head>
   <body>
-    <header>
-      <div class="conteneur">
-        <a class="logo" href={`${base}/`}>Prospective</a>
-        <nav aria-label="Menu principal">
+    <a class="lien-evitement" href="#contenu">Aller au contenu</a>
+
+    <header class="entete">
+      <div class="entete-barre">
+        <a class="logo" href={`${base}/`}>
+          <img
+            src={`${base}/images/logo-prospective-management.webp`}
+            alt={`${NOM} — accueil`}
+            width="640"
+            height="114"
+          />
+        </a>
+
+        <a class="bouton" href={RENDEZVOUS}>
+          <span class="court">Rendez-vous</span>
+          <span class="long">Planifier un rendez-vous</span>
+        </a>
+
+        <button class="bouton-menu" type="button" aria-expanded="false" aria-controls="menu">
+          <span class="barres" aria-hidden="true"></span>
+          <span class="libelle-menu">Menu</span>
+        </button>
+
+        <nav class="menu" id="menu" aria-label="Menu principal">
           <ul>
             {
-              menu.map((page) => (
-                <li>
-                  <a
-                    href={lien(page.id)}
-                    aria-current={lien(page.id) === actuelle ? 'page' : undefined}
-                  >
-                    {page.data.titre}
-                  </a>
-                </li>
-              ))
+              menu.map((element, i) =>
+                'groupe' in element ? (
+                  <li class="groupe">
+                    <span class="groupe-titre">{element.groupe}</span>
+                    <button
+                      class="groupe-bouton"
+                      type="button"
+                      aria-expanded="false"
+                      aria-controls={`sous-menu-${i}`}
+                    >
+                      {element.groupe}
+                    </button>
+                    <ul class="sous-menu" id={`sous-menu-${i}`}>
+                      {element.pages.map((p) => (
+                        <li>
+                          <a href={p.href} aria-current={p.href === actuelle ? 'page' : undefined}>
+                            {p.titre}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                ) : (
+                  <li>
+                    <a
+                      href={element.href}
+                      aria-current={element.href === actuelle ? 'page' : undefined}
+                    >
+                      {element.titre}
+                    </a>
+                  </li>
+                ),
+              )
             }
           </ul>
         </nav>
       </div>
     </header>
 
-    <main class="conteneur">
+    <main id="contenu" tabindex="-1">
       <slot />
     </main>
 
-    <footer>
-      <div class="conteneur">© {new Date().getFullYear()} Prospective</div>
+    <footer class="pied">
+      <div class="pied-colonnes">
+        <div>
+          <img
+            src={`${base}/images/logo-prospective-management.webp`}
+            alt={NOM}
+            width="640"
+            height="114"
+            loading="lazy"
+          />
+          <p>Conseil et formation en gestion, au Québec.</p>
+        </div>
+
+        {
+          expertises && (
+            <nav aria-label={expertises.groupe}>
+              <h2>{expertises.groupe}</h2>
+              <ul>
+                {expertises.pages.map((p) => (
+                  <li>
+                    <a href={p.href}>{p.titre}</a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )
+        }
+
+        <nav aria-label="Le cabinet">
+          <h2>Le cabinet</h2>
+          <ul>
+            {
+              autres.map((p) => (
+                <li>
+                  <a href={p.href}>{p.titre}</a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+
+        <div>
+          <h2>Nous contacter</h2>
+          <ul>
+            {
+              COURRIELS.map((c) => (
+                <li>
+                  <a href={`mailto:${c.adresse}`}>{c.adresse}</a>
+                </li>
+              ))
+            }
+          </ul>
+          <a class="bouton" href={RENDEZVOUS}>Planifier un rendez-vous</a>
+        </div>
+      </div>
+
+      <p class="mentions">© {new Date().getFullYear()} {NOM}. Ce site n'utilise aucun témoin (cookie) ni outil de mesure d'audience.</p>
     </footer>
+
+    <script>
+      // Outils interactifs des pages (tri, chaîne de valeur, diagnostic éclair).
+      import '../scripts/outils.js';
+
+      // Menu sur téléphone : ouvrir et fermer.
+      const boutonMenu = document.querySelector<HTMLButtonElement>('.bouton-menu');
+      const menu = document.getElementById('menu');
+      boutonMenu?.addEventListener('click', () => {
+        const ouvert = boutonMenu.getAttribute('aria-expanded') === 'true';
+        boutonMenu.setAttribute('aria-expanded', String(!ouvert));
+        menu?.classList.toggle('ouvert', !ouvert);
+      });
+
+      // Sous-menus (« Expertises », « Approche ») sur ordinateur.
+      const groupes = document.querySelectorAll<HTMLElement>('.groupe');
+      const fermer = (sauf?: HTMLElement) =>
+        groupes.forEach((g) => {
+          if (g === sauf) return;
+          g.classList.remove('ouvert');
+          g.querySelector('.groupe-bouton')?.setAttribute('aria-expanded', 'false');
+        });
+
+      groupes.forEach((groupe) => {
+        const bouton = groupe.querySelector<HTMLButtonElement>('.groupe-bouton');
+        bouton?.addEventListener('click', () => {
+          const ouvert = groupe.classList.toggle('ouvert');
+          bouton.setAttribute('aria-expanded', String(ouvert));
+          fermer(groupe);
+        });
+        groupe.addEventListener('focusout', (e) => {
+          if (!groupe.contains(e.relatedTarget as Node)) fermer();
+        });
+      });
+
+      document.addEventListener('click', (e) => {
+        if (![...groupes].some((g) => g.contains(e.target as Node))) fermer();
+      });
+
+      // Carrousel de logos : on double la rangée (copie masquée aux lecteurs
+      // d'écran) pour un défilement sans fin, avec un bouton de pause.
+      document.querySelectorAll<HTMLElement>('.logos.carrousel').forEach((carrousel) => {
+        const rangee = carrousel.querySelector('p');
+        if (!rangee) return;
+        [...rangee.querySelectorAll('img')].forEach((img) => {
+          const copie = img.cloneNode() as HTMLImageElement;
+          copie.alt = '';
+          copie.classList.add('copie');
+          copie.setAttribute('aria-hidden', 'true');
+          rangee.append(copie);
+        });
+        carrousel.classList.add('defile');
+
+        const pause = document.createElement('button');
+        pause.type = 'button';
+        pause.className = 'carrousel-pause';
+        pause.textContent = 'Mettre en pause le défilement';
+        pause.addEventListener('click', () => {
+          const enPause = carrousel.classList.toggle('en-pause');
+          pause.textContent = enPause ? 'Reprendre le défilement' : 'Mettre en pause le défilement';
+        });
+        carrousel.after(pause);
+      });
+
+      // Diaporama (carrousel des expertises) : flèches et pastilles sous les
+      // diapositives. Le défilement au doigt reste possible ; rien ne défile seul.
+      document.querySelectorAll<HTMLElement>('.diaporama').forEach((diaporama) => {
+        const diapos = [...diaporama.querySelectorAll<HTMLElement>(':scope > .diapo')];
+        if (diapos.length < 2) return;
+        diaporama.setAttribute('role', 'region');
+        diaporama.setAttribute('aria-roledescription', 'carrousel');
+        diaporama.setAttribute('aria-label', 'Nos expertises');
+        diapos.forEach((diapo, i) => {
+          diapo.setAttribute('role', 'group');
+          diapo.setAttribute('aria-roledescription', 'diapositive');
+          diapo.setAttribute('aria-label', `${i + 1} sur ${diapos.length}`);
+        });
+
+        const fleche = (sens: 'precedent' | 'suivant') => {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'fleche';
+          b.setAttribute('aria-label', sens === 'precedent' ? 'Diapositive précédente' : 'Diapositive suivante');
+          const trait = sens === 'precedent' ? 'M15 5l-7 7 7 7' : 'M9 5l7 7-7 7';
+          b.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${trait}"/></svg>`;
+          return b;
+        };
+
+        const actuelle = () => Math.round(diaporama.scrollLeft / diaporama.clientWidth);
+        const aller = (i: number) => {
+          const cible = (i + diapos.length) % diapos.length;
+          diaporama.scrollTo({ left: diapos[cible].offsetLeft - diapos[0].offsetLeft });
+        };
+
+        const precedent = fleche('precedent');
+        const suivant = fleche('suivant');
+        precedent.addEventListener('click', () => aller(actuelle() - 1));
+        suivant.addEventListener('click', () => aller(actuelle() + 1));
+
+        const pastilles = diapos.map((diapo, i) => {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'pastille';
+          const nom = diapo.querySelector('h2')?.textContent ?? `Diapositive ${i + 1}`;
+          b.setAttribute('aria-label', `Afficher : ${nom}`);
+          b.addEventListener('click', () => aller(i));
+          return b;
+        });
+
+        const marquer = () => {
+          const i = actuelle();
+          pastilles.forEach((p, j) => p.setAttribute('aria-current', String(i === j)));
+        };
+        diaporama.addEventListener('scroll', marquer, { passive: true });
+        marquer();
+
+        const commandes = document.createElement('div');
+        commandes.className = 'diaporama-commandes';
+        commandes.append(precedent, ...pastilles, suivant);
+        diaporama.after(commandes);
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        const ouvert = document.querySelector<HTMLElement>('.groupe.ouvert');
+        if (ouvert) {
+          fermer();
+          ouvert.querySelector<HTMLButtonElement>('.groupe-bouton')?.focus();
+        } else if (boutonMenu?.getAttribute('aria-expanded') === 'true') {
+          boutonMenu.click();
+          boutonMenu.focus();
+        }
+      });
+    </script>
   </body>
 </html>
-
-<style is:global>
-  :root {
-    --texte: #1f2328;
-    --fond: #ffffff;
-    --accent: #0b5cad;
-    --discret: #f3f4f6;
-    --largeur: 70rem;
-  }
-
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
-  }
-
-  body {
-    margin: 0;
-    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-    font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
-    line-height: 1.6;
-    color: var(--texte);
-    background: var(--fond);
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  }
-
-  img {
-    max-width: 100%;
-    height: auto;
-  }
-
-  a {
-    color: var(--accent);
-  }
-
-  h1 {
-    font-size: clamp(1.75rem, 1.4rem + 1.5vw, 2.5rem);
-    line-height: 1.2;
-  }
-
-  /* Largeur limitée et marges latérales sur tous les écrans */
-  .conteneur {
-    width: 100%;
-    max-width: var(--largeur);
-    margin: 0 auto;
-    padding: 0 1rem;
-  }
-
-  header {
-    border-bottom: 1px solid var(--discret);
-  }
-
-  header .conteneur {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem 1.5rem;
-    padding-block: 1rem;
-  }
-
-  .logo {
-    font-weight: 700;
-    font-size: 1.25rem;
-    color: var(--texte);
-    text-decoration: none;
-  }
-
-  nav ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem 1.25rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  nav a {
-    text-decoration: none;
-    padding: 0.25rem 0;
-  }
-
-  nav a[aria-current='page'] {
-    font-weight: 600;
-    border-bottom: 2px solid var(--accent);
-  }
-
-  main {
-    flex: 1;
-    padding-block: 2rem;
-  }
-
-  footer {
-    background: var(--discret);
-    padding-block: 1.5rem;
-    font-size: 0.9rem;
-  }
-
-  /* Tablette et ordinateur : plus d'espace */
-  @media (min-width: 48rem) {
-    .conteneur {
-      padding: 0 2rem;
-    }
-
-    main {
-      padding-block: 3rem;
-    }
-  }
-</style>

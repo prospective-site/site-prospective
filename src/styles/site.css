@@ -1,0 +1,2713 @@
+/*
+  Apparence du site. Toutes les valeurs viennent de tokens.css.
+  Règle de la charte : au plus 3 couleurs de la palette par section,
+  blanc compris.
+    - section blanche   : blanc, noir, bleu
+    - section .ouverture: blanc, noir, bleu-nuit
+    - section .douce    : vert-eau, noir (+ bleu-nuit pour les boutons)
+    - section .bleue    : bleu clair (teinte du bleu), blanc, noir, bleu
+    - section .verte    : vert clair (teinte du vert-eau), blanc, noir, bleu
+    - catalogue (Formations et conférences) : colonnes bleu clair, vert clair et beige clair (teinte du beige), blanc, bleu
+    - secteurs (Formations et conférences) : bleu et bleu sombre en damier, blanc
+    - quadrants (Démarche) : bleu et bleu sombre (teinte du bleu), blanc ; bleu clair au survol
+    - section .rupture  : bleu-nuit, blanc, vert-menthe
+*/
+
+/* ── Base ─────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: 5rem; /* l'en-tête fixe ne cache pas les ancres */
+}
+
+body {
+  margin: 0;
+  font-family: var(--police);
+  font-weight: var(--graisse-normale);
+  font-size: var(--taille-corps);
+  line-height: 1.65;
+  color: var(--texte);
+  background: var(--fond);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: var(--graisse-titre);
+  line-height: 1.2;
+  margin: 0 0 var(--space-2);
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--taille-titre);
+}
+
+h2 {
+  font-size: var(--taille-sous-titre);
+}
+
+h3 {
+  font-size: var(--taille-intertitre);
+  line-height: 1.4;
+}
+
+p,
+ul,
+ol,
+table {
+  margin: 0 0 var(--space-2);
+}
+
+p,
+li {
+  max-width: var(--mesure);
+}
+
+ul,
+ol {
+  padding-left: 1.25rem;
+}
+
+li + li {
+  margin-top: var(--space-1);
+}
+
+a {
+  color: var(--accent);
+  text-underline-offset: 0.2em;
+}
+
+strong {
+  font-weight: var(--graisse-titre);
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+.lien-evitement {
+  position: absolute;
+  left: var(--space-2);
+  top: -10rem;
+  z-index: 100;
+  padding: var(--space-1) var(--space-2);
+  background: var(--blanc);
+  color: var(--bleu-nuit);
+}
+
+.lien-evitement:focus {
+  top: var(--space-1);
+}
+
+/* ── En-tête et menu ──────────────────────────────────── */
+
+.entete {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--blanc);
+  border-bottom: 1px solid var(--filet);
+}
+
+.entete-barre {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: var(--largeur);
+  margin: 0 auto;
+  padding: var(--space-1) var(--gouttiere);
+  min-height: 4rem;
+}
+
+.logo {
+  display: block;
+  flex-shrink: 0; /* le logo ne se déforme jamais */
+  margin-right: auto;
+  line-height: 0;
+}
+
+.logo img {
+  height: 2.25rem;
+  width: auto;
+}
+
+.entete .bouton {
+  padding-inline: var(--space-2);
+  white-space: nowrap;
+}
+
+.bouton-menu {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 2.75rem;
+  padding: 0 var(--space-1);
+  font: inherit;
+  font-weight: var(--graisse-titre);
+  color: var(--texte);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.bouton-menu .barres,
+.bouton-menu .barres::before,
+.bouton-menu .barres::after {
+  display: block;
+  width: 1.25rem;
+  height: 2px;
+  background: currentColor;
+  transition: transform 0.2s;
+}
+
+.bouton-menu .barres {
+  position: relative;
+}
+
+.bouton-menu .barres::before,
+.bouton-menu .barres::after {
+  content: '';
+  position: absolute;
+  left: 0;
+}
+
+.bouton-menu .barres::before {
+  top: -6px;
+}
+
+.bouton-menu .barres::after {
+  top: 6px;
+}
+
+.bouton-menu[aria-expanded='true'] .barres {
+  background: transparent;
+}
+
+.bouton-menu[aria-expanded='true'] .barres::before {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.bouton-menu[aria-expanded='true'] .barres::after {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+.menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.menu li {
+  max-width: none;
+  margin: 0;
+}
+
+.menu a {
+  color: var(--texte);
+  text-decoration: none;
+}
+
+.menu a[aria-current='page'] {
+  color: var(--accent);
+}
+
+.groupe-bouton {
+  font: inherit;
+  color: var(--texte);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.groupe-bouton::after {
+  content: '';
+  display: inline-block;
+  width: 0.45em;
+  height: 0.45em;
+  margin-left: 0.5em;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-0.2em) rotate(45deg);
+}
+
+.groupe-bouton[aria-expanded='true']::after {
+  transform: translateY(0.1em) rotate(-135deg);
+}
+
+/* Téléphone et tablette : menu déroulant plein écran */
+@media (max-width: 63.99rem) {
+  .entete-barre {
+    flex-wrap: wrap;
+    padding-bottom: 0;
+  }
+
+  .entete-barre {
+    gap: var(--space-1);
+  }
+
+  .entete-barre > :not(.menu) {
+    margin-bottom: var(--space-1);
+  }
+
+  /* Le logo rapetisse avec l'écran pour laisser place au bouton et au menu */
+  .logo img {
+    height: clamp(1.375rem, 6.5vw, 2rem);
+  }
+
+  .entete .bouton {
+    padding-inline: var(--space-1);
+  }
+
+  .bouton-menu {
+    justify-content: center;
+    min-width: 2.75rem;
+  }
+}
+
+/* Petit téléphone : le mot « Menu » reste lu par les lecteurs d'écran */
+@media (max-width: 29.99rem) {
+  .libelle-menu {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 63.99rem) {
+
+  .menu {
+    flex-basis: calc(100% + 2 * var(--gouttiere));
+    margin-inline: calc(-1 * var(--gouttiere));
+    border-top: 1px solid var(--filet);
+    padding: var(--space-1) var(--gouttiere) var(--space-3);
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+  }
+
+  .js .menu:not(.ouvert) {
+    display: none;
+  }
+
+  .menu a {
+    display: flex;
+    align-items: center;
+    min-height: 3rem;
+  }
+
+  .menu > ul > li + li {
+    border-top: 1px solid var(--filet);
+  }
+
+  .groupe-bouton {
+    display: none;
+  }
+
+  .groupe-titre {
+    display: block;
+    padding-top: var(--space-2);
+    font-size: var(--taille-legende);
+    font-weight: var(--graisse-titre);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .sous-menu a {
+    padding-left: var(--space-2);
+  }
+
+  .entete .bouton .long {
+    display: none;
+  }
+}
+
+/* Petit ordinateur : le menu en ligne laisse peu de place, le bouton
+   reprend son libellé court « Rendez-vous ». */
+@media (min-width: 64rem) and (max-width: 71.99rem) {
+  .entete .entete-barre .bouton .court {
+    display: inline;
+  }
+
+  .entete .entete-barre .bouton .long {
+    display: none;
+  }
+
+  /* Menu encore un peu plus petit pour tenir sur une ligne avec le bouton */
+  .entete .menu {
+    font-size: 0.875rem;
+  }
+}
+
+/* Ordinateur : menu en ligne, sous-menu « Services » déroulant */
+@media (min-width: 64rem) {
+  /* Espacements mesurés : le menu (dont « Formations et conférences ») et le
+     bouton de rendez-vous tiennent sur une ligne dès 64rem */
+  .entete-barre {
+    gap: var(--space-2);
+  }
+
+  .bouton-menu,
+  .groupe-titre,
+  .entete .bouton .court {
+    display: none;
+  }
+
+  /* Texte du menu réduit : « Formations et conférences » est un intitulé long */
+  .menu {
+    order: 1;
+    font-size: 0.9375rem;
+  }
+
+  .entete .bouton {
+    order: 2;
+  }
+
+  .menu > ul {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .menu > ul > li {
+    position: relative;
+  }
+
+  .menu a,
+  .groupe-bouton {
+    display: inline-block;
+    padding: var(--space-1) 0;
+    white-space: nowrap;
+  }
+
+  .menu > ul > li > a[aria-current='page'] {
+    box-shadow: inset 0 -2px var(--accent);
+  }
+
+  .menu a:hover,
+  .groupe-bouton:hover {
+    color: var(--accent);
+  }
+
+  .sous-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: calc(-1 * var(--space-2));
+    min-width: 19rem;
+    padding: var(--space-1) 0;
+    background: var(--blanc);
+    border: 1px solid var(--filet);
+    border-radius: var(--radius-md);
+    box-shadow: 0 var(--space-1) var(--space-3) var(--filet);
+  }
+
+  .groupe.ouvert .sous-menu,
+  .no-js .groupe:hover .sous-menu,
+  .no-js .groupe:focus-within .sous-menu {
+    display: block;
+  }
+
+  .sous-menu a {
+    display: block;
+    padding: var(--space-1) var(--space-2);
+  }
+}
+
+/* ── Boutons ──────────────────────────────────────────── */
+
+.bouton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0.5rem 1.25rem;
+  font-weight: var(--graisse-titre);
+  line-height: 1.3;
+  text-align: center;
+  text-decoration: none;
+  color: var(--blanc);
+  background: var(--accent);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-md);
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.bouton:hover {
+  background: var(--bleu-nuit);
+  border-color: var(--bleu-nuit);
+}
+
+.bouton.secondaire {
+  color: var(--accent);
+  background: transparent;
+}
+
+.bouton.secondaire:hover {
+  color: var(--blanc);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Plusieurs boutons à la suite : un bloc « ::: boutons » */
+.boutons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.boutons > * {
+  margin: 0;
+}
+
+/* ── Sections ─────────────────────────────────────────── */
+
+main {
+  flex: 1;
+}
+
+/* Le contenu est centré sur une largeur maximale ; le fond occupe toute la largeur. */
+.section,
+main > :not(.section) {
+  padding-inline: max(var(--gouttiere), (100% - var(--largeur)) / 2);
+}
+
+.section {
+  padding-block: var(--space-4);
+}
+
+.section + .section:not(.douce, .rupture, .bleue, .verte) {
+  border-top: 1px solid var(--filet);
+}
+
+.section > :last-child,
+.carte > :last-child {
+  margin-bottom: 0;
+}
+
+.section > h2 {
+  max-width: var(--mesure);
+  margin-bottom: var(--space-3);
+}
+
+.section > h2 + p {
+  margin-top: calc(-1 * var(--space-2));
+  margin-bottom: var(--space-3);
+}
+
+.section > h3 {
+  margin-top: var(--space-3);
+}
+
+/* Ouverture de page */
+.ouverture {
+  padding-block: var(--space-4);
+}
+
+.ouverture h1 {
+  max-width: 22ch;
+  color: var(--bleu-nuit);
+}
+
+/* Partie de titre mise en valeur (« *texte* » dans le titre) : le titre passe
+   en noir et la partie reste en bleu-nuit, pour rester à 3 couleurs */
+.ouverture h1:has(em) {
+  color: var(--noir);
+}
+
+.ouverture h1 em {
+  font-style: normal;
+  color: var(--bleu-nuit);
+}
+
+.ouverture > p {
+  font-size: 1.125em;
+}
+
+.ouverture .bouton {
+  background: var(--bleu-nuit);
+  border-color: var(--bleu-nuit);
+}
+
+.ouverture .bouton.secondaire {
+  color: var(--bleu-nuit);
+  background: transparent;
+}
+
+.ouverture .bouton:hover {
+  color: var(--blanc);
+  background: var(--noir);
+  border-color: var(--noir);
+}
+
+.surtitre {
+  margin-bottom: var(--space-2);
+  font-size: var(--taille-legende);
+  font-weight: var(--graisse-titre);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.surtitre > p {
+  margin: 0;
+}
+
+/* Section en fond vert d'eau, texte noir */
+.douce {
+  background: var(--vert-eau);
+}
+
+.douce a:not(.bouton) {
+  color: var(--texte);
+}
+
+.douce .bouton {
+  background: var(--bleu-nuit);
+  border-color: var(--bleu-nuit);
+}
+
+.douce .bouton:hover {
+  background: var(--noir);
+  border-color: var(--noir);
+}
+
+/* Bouton contour sur vert d'eau : bleu-nuit (le bleu n'atteint pas 4,5:1) */
+.douce .bouton.secondaire {
+  color: var(--bleu-nuit);
+  background: transparent;
+}
+
+.douce .bouton.secondaire:hover {
+  color: var(--blanc);
+  background: var(--bleu-nuit);
+}
+
+.douce .carte {
+  border-color: color-mix(in srgb, var(--noir) 30%, transparent);
+}
+
+/* Sections des leviers (pages d'expertise) : levier 1 en bleu clair,
+   levier 2 en vert clair. Les cartes restent blanches par-dessus. */
+.bleue {
+  background: var(--bleu-pale);
+}
+
+.verte {
+  background: var(--vert-pale);
+}
+
+.section:is(.bleue, .verte) + .section {
+  border-top: 0;
+}
+
+.section:is(.bleue, .verte) .carte {
+  background: var(--blanc);
+}
+
+.section:is(.bleue, .verte) .pastilles li {
+  background: var(--blanc);
+  border-color: transparent;
+}
+
+/* Carte d'un levier en tête de page : même fond que la section du levier */
+.carte.bleue {
+  background: var(--bleu-pale);
+}
+
+.carte.verte {
+  background: var(--vert-pale);
+}
+
+/* Section de rupture : bleu-nuit, texte blanc */
+.rupture {
+  color: var(--blanc);
+  background: var(--fond-rupture);
+}
+
+.rupture h2::before {
+  content: '';
+  display: block;
+  width: var(--space-4);
+  height: 4px;
+  margin-bottom: var(--space-2);
+  background: var(--vert-menthe);
+  border-radius: var(--radius-sm);
+}
+
+.rupture a:not(.bouton) {
+  color: var(--blanc);
+}
+
+.rupture .bouton {
+  color: var(--bleu-nuit);
+  background: var(--blanc);
+  border-color: var(--blanc);
+}
+
+.rupture .bouton:hover {
+  color: var(--blanc);
+  background: transparent;
+}
+
+/* ── Cartes ───────────────────────────────────────────── */
+
+.cartes {
+  display: grid;
+  gap: var(--space-2);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  margin-bottom: var(--space-3);
+}
+
+.cartes.deux {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+}
+
+.carte {
+  display: flex;
+  flex-direction: column;
+  padding: clamp(var(--space-2) * 1.5, 3vw, var(--space-3));
+  border: 1px solid var(--filet);
+  border-top: 4px solid var(--accent);
+  border-radius: var(--radius-md);
+}
+
+.douce .carte {
+  border-top-color: var(--bleu-nuit);
+}
+
+.carte h3 {
+  margin-bottom: var(--space-1);
+}
+
+.carte ul {
+  padding-left: 1.1rem;
+}
+
+.carte li + li {
+  margin-top: 0.25rem;
+}
+
+/* Photo en tête de carte : une image seule, avant le titre */
+.carte > p:first-child:has(> img:only-child) {
+  margin-bottom: var(--space-2);
+}
+
+.carte > p:first-child > img:only-child {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+}
+
+/* Lien final d'une carte, poussé en bas */
+.carte > p:last-child:has(> a:only-child) {
+  margin-top: auto;
+  padding-top: var(--space-1);
+  font-weight: var(--graisse-titre);
+}
+
+/* Étiquette en tête de carte : « :etiquette[Diagnostic] » */
+.etiquette {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-size: var(--taille-legende);
+  font-weight: var(--graisse-titre);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* Sur vert d'eau, le bleu n'atteint pas 4,5:1 : l'étiquette passe en noir */
+.douce .etiquette {
+  color: var(--texte);
+}
+
+/* Détails pratiques en bas d'une carte (durée, format) */
+.carte .format {
+  margin-top: auto;
+  padding-top: var(--space-2);
+  font-size: var(--taille-legende);
+  font-weight: var(--graisse-legere);
+}
+
+.carte .format p {
+  margin: 0;
+}
+
+/* ── Étapes numérotées ────────────────────────────────── */
+
+.etapes ol {
+  counter-reset: etape;
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+}
+
+.etapes li {
+  counter-increment: etape;
+  margin: 0;
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--filet);
+}
+
+.etapes li::before {
+  content: '0' counter(etape);
+  display: block;
+  margin-bottom: var(--space-1);
+  font-size: var(--taille-sous-titre);
+  font-weight: var(--graisse-titre);
+  line-height: 1;
+  color: var(--accent);
+}
+
+.etapes li p {
+  margin-bottom: var(--space-1);
+}
+
+/* Paragraphe entièrement en italique dans une étape (« *Outils : …* ») : affiché en légende */
+.etapes li p:has(> em:only-child) {
+  font-size: var(--taille-legende);
+  font-weight: var(--graisse-legere);
+}
+
+.etapes li p > em:only-child {
+  font-style: normal;
+}
+
+.etapes.verticales ol {
+  grid-template-columns: 1fr;
+  max-width: var(--mesure);
+}
+
+/* ── Texte et photo côte à côte ───────────────────────── */
+
+/* Un bloc « texte », puis une image seule. Sur téléphone, la photo passe sous le texte. */
+.texte-photo {
+  display: grid;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+@media (min-width: 48rem) {
+  .texte-photo {
+    grid-template-columns: 1.1fr 1fr;
+    gap: var(--space-4);
+  }
+
+  .texte-photo.inverse > .texte {
+    order: 1;
+  }
+}
+
+.texte > :last-child {
+  margin-bottom: 0;
+}
+
+.texte > h2 {
+  margin-bottom: var(--space-3);
+}
+
+.texte-photo > p:has(> img:only-child) {
+  max-width: none;
+  margin: 0;
+}
+
+.texte-photo > p > img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+}
+
+.ouverture .texte > p {
+  font-size: 1.125em;
+}
+
+/* Visuel des trois horizons (accueil) : anneaux concentriques, points en orbite.
+   Couleurs de la section d'ouverture : blanc, noir, bleu-nuit (et ses atténuations). */
+/* Masqué sur téléphone : réduit, ses étiquettes deviendraient illisibles */
+.horizons {
+  display: none;
+  width: 100%;
+  max-width: 27.5rem;
+  margin-inline: auto;
+}
+
+@media (min-width: 48rem) {
+  .horizons {
+    display: block;
+  }
+}
+
+.horizons svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.horizons .anneau {
+  fill: none;
+  stroke: var(--bleu-nuit);
+  stroke-width: 1.2;
+  stroke-opacity: 0.45;
+}
+
+.horizons .anneau.a2 {
+  stroke-opacity: 0.3;
+}
+
+.horizons .anneau.a3 {
+  stroke-opacity: 0.18;
+}
+
+.horizons .point,
+.horizons .centre {
+  fill: var(--bleu-nuit);
+}
+
+.horizons .o2 .point {
+  fill-opacity: 0.7;
+}
+
+.horizons .o3 .point {
+  fill-opacity: 0.45;
+}
+
+.horizons .orbite {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  animation: orbite 40s linear infinite;
+}
+
+.horizons .orbite.o2 {
+  animation-duration: 60s;
+  animation-direction: reverse;
+}
+
+.horizons .orbite.o3 {
+  animation-duration: 90s;
+}
+
+@keyframes orbite {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .horizons .orbite {
+    animation: none;
+  }
+}
+
+.horizons text {
+  font-family: var(--police);
+}
+
+.horizons .vous {
+  font-size: 12px;
+  font-weight: var(--graisse-titre);
+  letter-spacing: 0.06em;
+  fill: var(--blanc);
+}
+
+.horizons .horizon {
+  font-size: 12px;
+  font-weight: var(--graisse-titre);
+  letter-spacing: 0.06em;
+  fill: var(--bleu-nuit);
+}
+
+.horizons .echeance {
+  font-size: 11.5px;
+  font-weight: var(--graisse-normale);
+  fill: var(--noir);
+}
+
+/* ── Chiffres clés ────────────────────────────────────── */
+
+/* Liste à puces : « - **20+** libellé » */
+.chiffres ul {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  max-width: none;
+}
+
+.chiffres li {
+  margin: 0;
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--filet);
+}
+
+.chiffres strong {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-size: var(--taille-titre);
+  line-height: 1;
+  color: var(--accent);
+}
+
+/* ── Outils interactifs (voir src/scripts/outils.js) ──── */
+
+/* Tri des tâches : des cartes côte à côte, un filtre par dimension */
+.tri {
+  display: grid;
+  gap: var(--space-2);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  margin-bottom: var(--space-3);
+}
+
+.tri .carte ul {
+  list-style: none;
+  padding: 0;
+}
+
+.tri .carte li {
+  margin: 0;
+  padding: var(--space-1) 0;
+  border-top: 1px solid var(--filet);
+  transition: opacity 0.2s;
+}
+
+.tri li > strong:first-child {
+  display: block;
+  font-size: var(--taille-legende);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.tri li.estompe {
+  opacity: 0.3;
+}
+
+.filtre {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-bottom: var(--space-3);
+}
+
+.filtre button {
+  min-height: 2.75rem;
+  padding: 0.25rem var(--space-2);
+  font: inherit;
+  font-weight: var(--graisse-titre);
+  color: var(--accent);
+  background: transparent;
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.filtre button[aria-pressed='true'] {
+  color: var(--blanc);
+  background: var(--accent);
+}
+
+/* Chaîne de valeur : sans JavaScript, une grille de maillons ;
+   avec, des onglets à gauche et le maillon choisi à droite */
+.chaine {
+  display: grid;
+  gap: var(--space-2);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+}
+
+.chaine.interactive {
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+  align-items: start;
+}
+
+@media (min-width: 48rem) {
+  .chaine.interactive {
+    grid-template-columns: minmax(15rem, 1fr) 2fr;
+  }
+}
+
+.maillon {
+  padding: clamp(var(--space-2) * 1.5, 3vw, var(--space-3));
+  border: 1px solid var(--filet);
+  border-top: 4px solid var(--accent);
+  border-radius: var(--radius-md);
+}
+
+.maillon > :last-child {
+  margin-bottom: 0;
+}
+
+.maillon h3 {
+  margin-bottom: var(--space-1);
+}
+
+.maillon h4 {
+  margin: var(--space-2) 0 var(--space-1);
+  font-size: var(--taille-legende);
+  font-weight: var(--graisse-titre);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.potentiel {
+  font-size: var(--taille-legende);
+  font-weight: var(--graisse-titre);
+  color: var(--accent);
+}
+
+.potentiel p {
+  margin: 0;
+}
+
+.onglets {
+  display: grid;
+  gap: var(--space-1);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+}
+
+@media (min-width: 48rem) {
+  .onglets {
+    grid-template-columns: 1fr;
+  }
+}
+
+.onglets button {
+  display: grid;
+  grid-template-columns: 2rem 1fr;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: var(--space-1) var(--space-2);
+  font: inherit;
+  text-align: left;
+  color: var(--texte);
+  background: transparent;
+  border: 1px solid var(--filet);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.onglets button:hover {
+  border-color: var(--accent);
+}
+
+.onglets button[aria-selected='true'] {
+  border-color: var(--accent);
+  box-shadow: inset 4px 0 var(--accent);
+}
+
+.onglets .numero {
+  font-weight: var(--graisse-titre);
+  color: var(--accent);
+}
+
+.onglets .nom {
+  font-weight: var(--graisse-titre);
+  line-height: 1.3;
+}
+
+.jauge {
+  grid-column: 2;
+  display: flex;
+  gap: 3px;
+  margin-top: 0.375rem;
+}
+
+.jauge i {
+  width: 1.25rem;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--filet);
+}
+
+.jauge i.plein {
+  background: var(--accent);
+}
+
+/* Diagnostic éclair : questions à choix, puis un profil */
+.questionnaire fieldset {
+  margin: 0 0 var(--space-3);
+  padding: 0;
+  border: 0;
+}
+
+.questionnaire legend {
+  max-width: var(--mesure);
+  margin-bottom: var(--space-1);
+  padding: 0;
+  font-weight: var(--graisse-titre);
+}
+
+.echelle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.echelle label {
+  position: relative;
+  cursor: pointer;
+}
+
+.echelle input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.echelle span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0.25rem var(--space-2);
+  border: 2px solid var(--filet);
+  border-radius: var(--radius-md);
+}
+
+.echelle label:hover span {
+  border-color: var(--accent);
+}
+
+.echelle input:checked + span {
+  color: var(--blanc);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.echelle input:focus-visible + span {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.questionnaire .message {
+  margin: var(--space-2) 0 0;
+  font-weight: var(--graisse-titre);
+}
+
+.resultat {
+  margin-top: var(--space-3);
+  padding: clamp(var(--space-2) * 1.5, 3vw, var(--space-3));
+  border: 1px solid var(--filet);
+  border-top: 4px solid var(--accent);
+  border-radius: var(--radius-md);
+}
+
+.resultat[hidden] {
+  display: none;
+}
+
+.resultat > :last-child {
+  margin-bottom: 0;
+}
+
+/* ── Listes en colonnes ───────────────────────────────── */
+
+.colonnes ul {
+  columns: 16rem 2;
+  column-gap: var(--space-3);
+  max-width: none;
+}
+
+.colonnes li {
+  break-inside: avoid;
+}
+
+/* ── Logos clients et partenaires ─────────────────────── */
+
+.logos p {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
+  max-width: none;
+}
+
+/* Logos en petit et en nuances de gris, pour ne pas ajouter de couleurs à la section */
+.logos img {
+  height: 3rem;
+  width: auto;
+  max-width: 10rem;
+  object-fit: contain;
+  filter: grayscale(1);
+}
+
+.logos.partenaires img {
+  height: 3.5rem;
+  max-width: 12rem;
+}
+
+/* Carrousel : une seule ligne qui défile en continu. Le script double la
+   rangée de logos ; la rangée glisse de la moitié de sa largeur, puis reprend. */
+.logos.carrousel {
+  overflow: hidden;
+}
+
+.logos.carrousel p {
+  flex-wrap: nowrap;
+  gap: 0;
+  width: max-content;
+}
+
+/* Une marge après chaque logo (plutôt qu'un « gap ») : les deux moitiés de la
+   rangée ont ainsi exactement la même largeur, et la boucle ne saute pas. */
+.logos.carrousel img {
+  height: 2.25rem;
+  max-width: 7.5rem;
+  margin-right: var(--space-4);
+}
+
+.logos.carrousel.defile p {
+  animation: defilement 45s linear infinite;
+}
+
+.logos.carrousel.defile:hover p,
+.logos.carrousel.en-pause p {
+  animation-play-state: paused;
+}
+
+@keyframes defilement {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.carrousel-pause {
+  margin-top: var(--space-1);
+  padding: 0.25rem 0;
+  font: inherit;
+  font-size: var(--taille-legende);
+  color: var(--accent);
+  text-decoration: underline;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+/* Animations réduites : pas de défilement automatique ; la rangée se fait
+   défiler à la main, et le bouton de pause n'a plus lieu d'être. */
+@media (prefers-reduced-motion: reduce) {
+  .logos.carrousel {
+    overflow-x: auto;
+  }
+
+  .logos.carrousel.defile p {
+    animation: none;
+  }
+
+  .logos.carrousel .copie,
+  .carrousel-pause {
+    display: none;
+  }
+}
+
+/* ── Tableaux (catalogue) ─────────────────────────────── */
+
+.tableau {
+  overflow-x: auto;
+  margin-bottom: var(--space-3);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 0.75rem var(--space-2) 0.75rem 0;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--filet);
+}
+
+th {
+  font-size: var(--taille-legende);
+  font-weight: var(--graisse-titre);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border-bottom: 2px solid var(--accent);
+}
+
+td:not(:first-child) {
+  white-space: nowrap;
+}
+
+/* ── Équipe ───────────────────────────────────────────── */
+
+.photo-equipe p {
+  max-width: none;
+  margin: 0;
+}
+
+.photo-equipe img {
+  display: block;
+  width: 100%;
+  max-height: 32rem;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+}
+
+.profils {
+  display: grid;
+  gap: var(--space-4) var(--space-3);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr));
+}
+
+.profil > p:first-child {
+  margin-bottom: var(--space-2);
+}
+
+.profil > p:first-child img {
+  display: block;
+  width: 9rem;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.profil h3 {
+  margin-bottom: 0.25rem;
+  font-size: var(--taille-sous-titre);
+}
+
+.titres {
+  margin-bottom: var(--space-2);
+  color: var(--accent);
+}
+
+.titres p {
+  margin: 0;
+}
+
+/* Liste de publications : titre, puis média en légende */
+.references ul {
+  list-style: none;
+  padding: 0;
+}
+
+.references li {
+  max-width: var(--mesure);
+  padding: var(--space-2) 0;
+  margin: 0;
+  border-bottom: 1px solid var(--filet);
+}
+
+.references li a {
+  font-weight: var(--graisse-titre);
+}
+
+.references em {
+  display: block;
+  font-style: normal;
+  font-size: var(--taille-legende);
+  font-weight: var(--graisse-legere);
+}
+
+/* Petit texte : sources, précisions */
+.legende {
+  font-size: var(--taille-legende);
+  font-weight: var(--graisse-legere);
+}
+
+/* ── Pied de page ─────────────────────────────────────── */
+
+.pied {
+  padding: var(--space-4) max(var(--gouttiere), (100% - var(--largeur)) / 2) var(--space-3);
+  border-top: 1px solid var(--filet);
+}
+
+.pied-colonnes {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+}
+
+/* Ordinateur : la colonne des courriels prend la largeur des adresses */
+@media (min-width: 64rem) {
+  .pied-colonnes {
+    grid-template-columns: 1fr 1fr 1fr auto;
+  }
+}
+
+.pied img {
+  height: 2.5rem;
+  width: auto;
+}
+
+.pied h2 {
+  margin-bottom: var(--space-1);
+  font-size: var(--taille-legende);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pied ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.pied li {
+  margin: 0;
+}
+
+.pied li a {
+  display: inline-block;
+  padding: 0.35rem 0;
+  overflow-wrap: anywhere;
+}
+
+.pied a:not(.bouton) {
+  color: var(--texte);
+}
+
+.pied .bouton {
+  margin-top: var(--space-2);
+}
+
+.mentions {
+  margin: var(--space-4) 0 0;
+  font-size: var(--taille-legende);
+  font-weight: var(--graisse-legere);
+}
+
+/* ── Diaporama (accueil : carrousel des expertises) ───── */
+
+/* Une diapositive par écran, qu'on fait défiler du doigt ou avec les flèches.
+   Sans JavaScript, la rangée défile simplement à l'horizontale. */
+.diaporama {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 100%;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .diaporama {
+    scroll-behavior: smooth;
+  }
+}
+
+.js .diaporama {
+  scrollbar-width: none;
+}
+
+.js .diaporama::-webkit-scrollbar {
+  display: none;
+}
+
+/* Photo, surtitre, titre, texte, bouton. Sur ordinateur, la photo passe à droite. */
+.diapo {
+  display: grid;
+  gap: var(--space-2) var(--space-4);
+  align-content: center;
+  scroll-snap-align: start;
+}
+
+.diapo > p {
+  margin: 0;
+}
+
+.diapo > p:first-child {
+  max-width: none;
+}
+
+.diapo > p:first-child img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+}
+
+.diapo > p:nth-child(2) {
+  font-size: var(--taille-legende);
+  font-weight: var(--graisse-titre);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bleu-nuit);
+}
+
+.diapo > h2 {
+  margin: 0;
+  color: var(--bleu-nuit);
+}
+
+.diapo > p:nth-child(4) {
+  font-size: 1.125em;
+}
+
+.diapo > .bouton {
+  justify-self: start;
+}
+
+/* Sur téléphone, la photo passe sous le texte : le titre reste visible d'emblée */
+@media (max-width: 47.99rem) {
+  .diapo > p:first-child {
+    order: 1;
+    margin-top: var(--space-1);
+  }
+}
+
+@media (min-width: 48rem) {
+  .diapo {
+    grid-template-columns: 1.1fr 1fr;
+    grid-template-rows: 1fr repeat(4, auto) 1fr;
+    align-content: stretch;
+  }
+
+  .diapo > :first-child {
+    grid-column: 2;
+    grid-row: 1 / -1;
+    align-self: center;
+  }
+
+  .diapo > :nth-child(n + 2) {
+    grid-column: 1;
+  }
+
+  .diapo > :nth-child(2) {
+    grid-row: 2;
+  }
+
+  .diapo > :nth-child(3) {
+    grid-row: 3;
+  }
+
+  .diapo > :nth-child(4) {
+    grid-row: 4;
+  }
+
+  .diapo > :nth-child(5) {
+    grid-row: 5;
+    margin-top: var(--space-1);
+  }
+}
+
+/* Commandes ajoutées par le script : flèches et pastilles */
+.diaporama-commandes {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-3);
+}
+
+.diaporama-commandes button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  padding: 0;
+  font: inherit;
+  color: var(--bleu-nuit);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.diaporama-commandes .fleche {
+  border: 2px solid var(--bleu-nuit);
+  border-radius: 50%;
+}
+
+.diaporama-commandes .fleche:hover {
+  color: var(--blanc);
+  background: var(--bleu-nuit);
+}
+
+.diaporama-commandes .fleche svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+.diaporama-commandes .pastille::before {
+  content: '';
+  width: 0.75rem;
+  height: 0.75rem;
+  border: 2px solid var(--bleu-nuit);
+  border-radius: 50%;
+}
+
+.diaporama-commandes .pastille[aria-current='true']::before {
+  background: var(--bleu-nuit);
+}
+
+/* ── Public visé, en tête de carte (formations, conférences) ── */
+
+.carte .public {
+  margin-bottom: var(--space-2);
+  font-size: var(--taille-legende);
+}
+
+.carte .public p {
+  margin: 0;
+}
+
+/* ── Pictogrammes au trait (page Outils) ──────────────── */
+
+.pictogramme {
+  display: block;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin-bottom: var(--space-2);
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ── Interventions : un paragraphe, puis des puces en crochet ── */
+
+.interventions .carte ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.interventions .carte li {
+  position: relative;
+  padding-left: 1.75rem;
+}
+
+.interventions .carte li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.25em;
+  width: 1.1rem;
+  height: 1.1rem;
+  background: var(--accent);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12.5l5 5L20 6.5'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12.5l5 5L20 6.5'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* ── Cartes des expertises (accueil) ──────────────────── */
+
+/* Pictogramme posé sur une pastille (bleu clair à l'accueil, blanche sur les
+   cartes de levier, déjà teintées) */
+.expertises .pictogramme,
+.leviers .pictogramme,
+.duo .pictogramme,
+.colonne .pictogramme {
+  box-sizing: content-box;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0.75rem;
+  stroke-width: 2;
+  background: var(--bleu-pale);
+  border-radius: 50%;
+}
+
+/* Liens vers les leviers : une flèche bleue plutôt qu'une puce */
+.expertises .carte ul {
+  margin-top: auto;
+  padding: var(--space-2) 0 0;
+  list-style: none;
+  border-top: 1px solid var(--filet);
+}
+
+.expertises .carte li + li {
+  margin-top: var(--space-1);
+}
+
+.expertises .carte li a {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  font-weight: var(--graisse-titre);
+  text-decoration: none;
+}
+
+.expertises .carte li a:hover {
+  text-decoration: underline;
+}
+
+.expertises .carte li a::before,
+.leviers .carte > p:last-child > a::before {
+  content: '';
+  flex: none;
+  width: 1rem;
+  height: 1rem;
+  transform: translateY(0.15em);
+  background: var(--accent);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12h15M13 6l6 6-6 6'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12h15M13 6l6 6-6 6'/%3E%3C/svg%3E") center / contain no-repeat;
+  transition: transform 0.15s;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .expertises .carte li a:hover::before,
+  .leviers .carte > p:last-child > a:hover::before {
+    transform: translate(0.25rem, 0.15em);
+  }
+}
+
+/* ── Encadré (accueil : solution sectorielle) ─────────── */
+
+/* Fond vert clair et filet bleu à gauche : se distingue des cartes sans les concurrencer */
+.encadre {
+  padding: var(--space-2) var(--space-3);
+  background: var(--vert-pale);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius-md);
+}
+
+.encadre .surtitre {
+  margin-bottom: var(--space-1);
+  color: var(--accent);
+}
+
+.encadre > p {
+  max-width: none;
+  margin: 0;
+}
+
+/* Le lien reste d'un seul tenant quand la largeur le permet ; sur téléphone,
+   il peut se couper pour ne pas déborder. */
+@media (min-width: 48rem) {
+  .encadre a {
+    white-space: nowrap;
+  }
+}
+
+.encadre a {
+  font-weight: var(--graisse-titre);
+}
+
+.leviers .pictogramme,
+.duo .pictogramme,
+.colonne .pictogramme {
+  background: var(--blanc);
+}
+
+/* Lien « Découvrir » des cartes de levier : même flèche que sur l'accueil */
+.leviers .carte > p:last-child > a {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  text-decoration: none;
+}
+
+.leviers .carte > p:last-child > a:hover {
+  text-decoration: underline;
+}
+
+/* ── Texte réservé aux lecteurs d'écran ───────────────── */
+
+.masque {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ── Mosaïque (formations et conférences liées) ───────── */
+
+/* Une liste de liens affichée en tuiles. Trois teintes en alternance :
+   bleu clair, vert clair, blanc à filet bleu (blanc, bleu, vert-eau). */
+.mosaique ul {
+  display: grid;
+  gap: var(--space-2);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  max-width: none;
+  padding: 0;
+  list-style: none;
+}
+
+.mosaique li {
+  max-width: none;
+  margin: 0;
+}
+
+.mosaique a {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 6.5rem;
+  padding: var(--space-2);
+  color: var(--texte);
+  text-decoration: none;
+  background: var(--bleu-pale);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.mosaique li:nth-child(3n + 2) a {
+  background: var(--vert-pale);
+}
+
+.mosaique li:nth-child(3n) a {
+  background: var(--blanc);
+  border-color: var(--filet);
+  border-top: 4px solid var(--accent);
+}
+
+.mosaique strong {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 1.125rem;
+  line-height: 1.3;
+}
+
+.mosaique a:hover {
+  border-color: var(--accent);
+}
+
+.mosaique a:hover strong {
+  text-decoration: underline;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mosaique a:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* Sur grand écran : trois colonnes, et une tuile sur trois s'étire sur deux
+   colonnes, en quinconce, pour l'effet de mosaïque. */
+@media (min-width: 64rem) {
+  .mosaique ul {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .mosaique li:nth-child(6n + 1),
+  .mosaique li:nth-child(6n + 4),
+  .mosaique li:nth-child(6n + 5) {
+    grid-column: span 2;
+  }
+}
+
+/* ── Duo : questions à gauche, résultats à droite ─────── */
+
+/* Deux cartes teintées côte à côte ; chaque élément de liste est précédé
+   d'une icône : point d'interrogation à gauche, coche à droite. */
+.duo .carte ul {
+  padding-left: 0;
+  list-style: none;
+}
+
+.duo .carte li {
+  position: relative;
+  padding-left: 2rem;
+}
+
+.duo .carte li + li {
+  margin-top: var(--space-1);
+}
+
+.duo .carte li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+  width: 1.3rem;
+  height: 1.3rem;
+  background: var(--accent);
+}
+
+.duo .questions li::before {
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9.5'/%3E%3Cpath d='M9.5 9.5a2.5 2.5 0 1 1 3.3 2.4c-.5.2-.8.6-.8 1.1v.6'/%3E%3Cpath d='M12 16.6v.4'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9.5'/%3E%3Cpath d='M9.5 9.5a2.5 2.5 0 1 1 3.3 2.4c-.5.2-.8.6-.8 1.1v.6'/%3E%3Cpath d='M12 16.6v.4'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.duo .acquis li::before {
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9.5'/%3E%3Cpath d='M7.5 12.5l3 3 6-6.5'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9.5'/%3E%3Cpath d='M7.5 12.5l3 3 6-6.5'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* ── Pastilles : courte liste d'enjeux en étiquettes arrondies ── */
+
+.pastilles ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  max-width: none;
+  margin-bottom: var(--space-3);
+  padding: 0;
+  list-style: none;
+}
+
+.pastilles li {
+  max-width: none;
+  margin: 0;
+  padding: 0.375rem var(--space-2);
+  font-size: 0.9375em;
+  border: 1px solid var(--filet);
+  border-radius: var(--radius-lg);
+}
+
+/* ── Parcours (Démarche) : piste de cercles et encadré de détail ── */
+
+/* Sans JavaScript : les étapes se suivent, chacune dans un encadré bleu clair. */
+.parcours .etape {
+  padding: clamp(var(--space-2) * 1.5, 3vw, var(--space-3));
+  background: var(--bleu-pale);
+  border-radius: var(--radius-md);
+}
+
+.parcours .etape + .etape {
+  margin-top: var(--space-2);
+}
+
+.parcours .etape[hidden] {
+  display: none;
+}
+
+.parcours .etape > :last-child {
+  margin-bottom: 0;
+}
+
+.parcours .etape h3 {
+  margin-bottom: var(--space-1);
+}
+
+.parcours .etape .numero {
+  color: var(--accent);
+}
+
+.parcours .resume {
+  margin-bottom: var(--space-1);
+  font-weight: var(--graisse-titre);
+}
+
+.parcours .resume p {
+  margin: 0;
+}
+
+.parcours .etape h4 {
+  margin: var(--space-2) 0 var(--space-1);
+  font-size: var(--taille-legende);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.parcours .etape ul {
+  padding-left: 0;
+  list-style: none;
+}
+
+.parcours .etape li {
+  position: relative;
+  padding-left: 1.75rem;
+}
+
+.parcours .etape li + li {
+  margin-top: 0.375rem;
+}
+
+.parcours .etape li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.25em;
+  width: 1.1rem;
+  height: 1.1rem;
+  background: var(--accent);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12.5l5 5L20 6.5'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12.5l5 5L20 6.5'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* Piste : quatre cercles reliés par un trait qui se remplit jusqu'à l'étape choisie */
+.piste {
+  --cercle: 2.75rem;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin-bottom: var(--space-3);
+}
+
+.piste::before,
+.piste::after {
+  content: '';
+  position: absolute;
+  top: calc(var(--cercle) / 2 - 1px);
+  left: 12.5%;
+  height: 2px;
+}
+
+.piste::before {
+  right: 12.5%;
+  background: var(--filet);
+}
+
+.piste::after {
+  width: calc(var(--avancement, 0) * 75%);
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+
+.etape-bouton {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0 0.25rem;
+  font: inherit;
+  color: var(--texte);
+  text-align: center;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.etape-bouton .cercle {
+  display: grid;
+  place-items: center;
+  width: var(--cercle);
+  height: var(--cercle);
+  margin-bottom: var(--space-1);
+  font-size: 1.125rem;
+  font-weight: var(--graisse-titre);
+  color: var(--accent);
+  background: var(--blanc);
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  transition: background-color 0.2s, color 0.2s, transform 0.2s;
+}
+
+/* Étapes déjà franchies : cercle teinté ; étape choisie ou survolée : cercle plein */
+.etape-bouton.franchie .cercle {
+  background: var(--bleu-pale);
+}
+
+.etape-bouton:hover .cercle,
+.etape-bouton[aria-selected='true'] .cercle {
+  color: var(--blanc);
+  background: var(--accent);
+}
+
+.etape-bouton .nom {
+  font-size: 0.9375rem;
+  font-weight: var(--graisse-titre);
+  line-height: 1.3;
+}
+
+.etape-bouton[aria-selected='true'] .nom {
+  color: var(--accent);
+}
+
+.etape-bouton .resume-court {
+  display: none;
+  font-size: var(--taille-legende);
+  line-height: 1.4;
+}
+
+@media (min-width: 48rem) {
+  .piste {
+    --cercle: 3.5rem;
+  }
+
+  .etape-bouton .nom {
+    font-size: var(--taille-intertitre);
+  }
+
+  .etape-bouton .resume-court {
+    display: block;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .etape-bouton[aria-selected='true'] .cercle {
+    transform: scale(1.08);
+  }
+
+  .parcours.interactif .etape:not([hidden]) {
+    animation: apparition 0.3s ease;
+  }
+}
+
+@keyframes apparition {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+}
+
+/* Encadré de l'étape choisie : texte à gauche, outils à droite (le résumé est
+   déjà sous le cercle, on ne le répète pas) */
+.parcours.interactif .resume {
+  display: none;
+}
+
+.parcours.interactif .etape {
+  display: grid;
+  gap: 0 var(--space-4);
+  align-content: start;
+}
+
+.parcours.interactif .etape[hidden] {
+  display: none;
+}
+
+@media (min-width: 48rem) {
+  .parcours.interactif .etape {
+    grid-template-columns: 1.3fr 1fr;
+  }
+
+  .parcours.interactif .etape > h3,
+  .parcours.interactif .etape > p {
+    grid-column: 1;
+  }
+
+  .parcours.interactif .etape > h4,
+  .parcours.interactif .etape > ul {
+    grid-column: 2;
+  }
+
+  .parcours.interactif .etape > h3,
+  .parcours.interactif .etape > h4 {
+    grid-row: 1;
+  }
+
+  .parcours.interactif .etape > p,
+  .parcours.interactif .etape > ul {
+    grid-row: 2;
+  }
+
+  .parcours.interactif .etape > h4 {
+    align-self: end;
+    margin-top: 0;
+  }
+}
+
+/* ── Quadrants (Démarche : notre promesse) ────────────── */
+
+/* Téléphone : une carte par engagement, bandeau illustré sombre avec le titre,
+   puis le texte sur fond clair. */
+.quadrants {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.quadrant {
+  position: relative;
+  overflow: hidden;
+  color: var(--blanc);
+  background: var(--bleu);
+  border-radius: var(--radius-md);
+}
+
+.quadrant:nth-child(4n + 2),
+.quadrant:nth-child(4n + 3) {
+  background: var(--bleu-sombre);
+}
+
+/* Le Markdown enveloppe l'illustration dans un paragraphe : on le neutralise */
+.quadrant > p:has(> .illustration) {
+  display: contents;
+}
+
+.quadrant .illustration {
+  position: absolute;
+  inset: 0 0 auto;
+  width: 100%;
+  height: 7rem;
+  fill: none;
+  stroke: var(--blanc);
+  stroke-opacity: 0.3;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.quadrant h3 {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: 7rem;
+  margin: 0;
+  padding: var(--space-2);
+  color: var(--blanc);
+}
+
+.quadrant p {
+  max-width: none;
+  margin: 0;
+  padding: var(--space-2);
+  color: var(--texte);
+  background: var(--bleu-pale);
+}
+
+.indice {
+  display: none;
+}
+
+/* Tablette et ordinateur : un cercle en quatre quadrants. Le titre s'affiche en
+   clair sur l'illustration ; au survol (ou au clavier), le texte le remplace,
+   en sombre sur fond clair. */
+@media (min-width: 48rem) {
+  .quadrants {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    width: min(100%, 36rem);
+    aspect-ratio: 1;
+    margin-inline: auto;
+    overflow: hidden;
+    border-radius: 50%;
+    /* Les tailles de texte suivent la taille du cercle */
+    container-type: inline-size;
+  }
+
+  /* Le contenu occupe une zone carrée côté centre du cercle (60 % du quadrant),
+     la seule entièrement à l'intérieur de l'arrondi. Les pourcentages se
+     rapportent à la largeur du quadrant. */
+  .quadrant {
+    display: grid;
+    place-items: center;
+    padding: 36% 4% 4% 36%;
+    text-align: center;
+    border-radius: 0;
+    transition: background-color 0.25s;
+  }
+
+  .quadrant:nth-child(4n + 2) {
+    padding: 36% 36% 4% 4%;
+  }
+
+  .quadrant:nth-child(4n + 3) {
+    padding: 4% 4% 36% 36%;
+  }
+
+  .quadrant:nth-child(4n + 4) {
+    padding: 4% 36% 36% 4%;
+  }
+
+  .quadrant .illustration {
+    inset: 0;
+    height: 100%;
+    transition: opacity 0.25s;
+  }
+
+  .quadrant h3,
+  .quadrant p {
+    grid-area: 1 / 1;
+    min-height: 0;
+    padding: 0;
+    background: none;
+    transition: opacity 0.25s;
+  }
+
+  .quadrant h3 {
+    display: block;
+    font-size: clamp(1rem, 3.4cqi, var(--taille-intertitre));
+    line-height: 1.25;
+  }
+
+  .quadrant p {
+    position: relative;
+    min-width: 0;
+    font-size: clamp(0.75rem, 2.4cqi, 0.875rem);
+    line-height: 1.45;
+    opacity: 0;
+  }
+
+  .quadrant:hover,
+  .quadrant:focus-visible {
+    background: var(--bleu-pale);
+  }
+
+  .quadrant:hover .illustration,
+  .quadrant:hover h3,
+  .quadrant:focus-visible .illustration,
+  .quadrant:focus-visible h3 {
+    opacity: 0;
+  }
+
+  .quadrant:hover p,
+  .quadrant:focus-visible p {
+    opacity: 1;
+  }
+
+  .quadrant:focus-visible {
+    outline-offset: -6px;
+  }
+
+  .indice {
+    display: block;
+    margin-top: var(--space-2);
+    text-align: center;
+  }
+
+  .indice p {
+    max-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quadrant,
+  .quadrant * {
+    transition: none;
+  }
+}
+
+/* ── Catalogue (formations et conférences) ────────────── */
+
+/* Trois colonnes sur ordinateur : les expertises, les titres de l'expertise
+   choisie, puis la description. Teintes par expertise : bleu clair, vert clair,
+   beige clair. Sur téléphone, les trois blocs s'empilent. */
+.catalogue-zone {
+  display: grid;
+  gap: var(--space-2);
+}
+
+@media (min-width: 64rem) {
+  .catalogue-zone {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr) minmax(0, 1.3fr);
+    gap: var(--space-3);
+    align-items: start;
+  }
+}
+
+/* Colonne 1 : les expertises */
+.choix-expertises {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.choix-expertises button {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 3.5rem;
+  padding: 0.625rem var(--space-2);
+  font: inherit;
+  font-weight: var(--graisse-titre);
+  line-height: 1.3;
+  text-align: left;
+  color: var(--texte);
+  background: var(--bleu-pale);
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.choix-expertises button:nth-child(3n + 2) {
+  background: var(--vert-pale);
+}
+
+.choix-expertises button:nth-child(3n) {
+  background: var(--beige-pale);
+}
+
+.choix-expertises button:hover {
+  border-color: var(--filet);
+}
+
+.choix-expertises button[aria-pressed='true'] {
+  border-color: var(--accent);
+}
+
+/* Chevron vers la colonne suivante, sur l'expertise choisie */
+.choix-expertises button[aria-pressed='true']::after {
+  content: '';
+  flex: none;
+  width: 1rem;
+  height: 1rem;
+  margin-left: auto;
+  background: var(--accent);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 5l7 7-7 7'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 5l7 7-7 7'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.choix-expertises .pictogramme {
+  flex: none;
+  box-sizing: content-box;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0;
+  padding: 0.35rem;
+  stroke-width: 2;
+  background: var(--blanc);
+  border-radius: 50%;
+}
+
+@media (max-width: 63.99rem) {
+  .choix-expertises {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .choix-expertises button {
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 0.375rem;
+    padding: 0.625rem 0.375rem;
+    font-size: 0.8125rem;
+    text-align: center;
+  }
+
+  .choix-expertises button[aria-pressed='true']::after {
+    display: none;
+  }
+}
+
+/* Colonne 2 : les titres de l'expertise choisie, sur sa teinte */
+.colonne {
+  padding: var(--space-2);
+  background: var(--bleu-pale);
+  border-radius: var(--radius-md);
+}
+
+.colonne:nth-child(3n + 2) {
+  background: var(--vert-pale);
+}
+
+.colonne:nth-child(3n) {
+  background: var(--beige-pale);
+}
+
+.colonne[hidden] {
+  display: none;
+}
+
+.colonne h3 {
+  margin: 0 0 var(--space-1);
+  font-size: 1.0625rem;
+}
+
+/* L'icône est déjà dans la colonne 1 ; sans JavaScript, elle reste en tête de section */
+.catalogue.interactif .colonne > p:has(> .pictogramme) {
+  display: none;
+}
+
+.colonne > p:has(> .pictogramme) {
+  margin: 0 0 var(--space-1);
+  line-height: 0;
+}
+
+.colonne .pictogramme {
+  display: inline-block;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0;
+  padding: 0.35rem;
+}
+
+.catalogue:not(.interactif) {
+  display: grid;
+  gap: var(--space-2);
+}
+
+/* Sans JavaScript : les fiches complètes restent dans leur section */
+.colonne .fiche {
+  padding: var(--space-1) 0;
+  border-top: 1px solid var(--filet);
+}
+
+.titres-catalogue {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.titres-catalogue li {
+  max-width: none;
+  margin: 0;
+}
+
+.titres-catalogue li + li {
+  margin-top: 0.125rem;
+}
+
+.titres-catalogue button {
+  display: block;
+  width: 100%;
+  padding: 0.45rem 0.625rem;
+  font: inherit;
+  font-size: 0.9375rem;
+  line-height: 1.35;
+  text-align: left;
+  color: var(--texte);
+  background: transparent;
+  border: 0;
+  border-left: 3px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.titres-catalogue button:hover {
+  background: var(--blanc);
+}
+
+.titres-catalogue button[aria-pressed='true'] {
+  font-weight: var(--graisse-titre);
+  background: var(--blanc);
+  border-left-color: var(--accent);
+}
+
+/* Colonne 3 : la description */
+.catalogue-detail {
+  padding: clamp(var(--space-2) * 1.5, 3vw, var(--space-3));
+  border: 1px solid var(--filet);
+  border-top: 4px solid var(--accent);
+  border-radius: var(--radius-md);
+}
+
+@media (min-width: 64rem) {
+  .catalogue-detail {
+    position: sticky;
+    top: calc(4rem + var(--space-2));
+  }
+}
+
+.catalogue-detail .invite {
+  margin: 0;
+  font-weight: var(--graisse-legere);
+}
+
+.catalogue-detail .invite[hidden],
+.fiche[hidden] {
+  display: none;
+}
+
+.fiche h4 {
+  margin: 0 0 var(--space-1);
+  font-size: var(--taille-intertitre);
+  line-height: 1.3;
+}
+
+.catalogue-detail .fiche h4 {
+  margin-bottom: var(--space-2);
+}
+
+.fiche ul {
+  margin: 0 0 var(--space-2);
+  padding: 0;
+  list-style: none;
+}
+
+.fiche li + li {
+  margin-top: 0.25rem;
+}
+
+.fiche > :last-child {
+  margin-bottom: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .catalogue-detail .fiche:not([hidden]) {
+    animation: apparition 0.3s ease;
+  }
+}
+
+/* ── Secteurs : quatre tuiles sombres illustrées ──────── */
+
+/* Texte clair sur fond bleu (en damier avec le bleu sombre), illustration au
+   trait en filigrane, côté droit. Deux colonnes dès la tablette. */
+.secteurs {
+  display: grid;
+  gap: var(--space-2);
+}
+
+@media (min-width: 48rem) {
+  .secteurs {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.secteur {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 12rem;
+  padding: var(--space-3);
+  color: var(--blanc);
+  background: var(--bleu);
+  border-radius: var(--radius-md);
+}
+
+/* Téléphone : une tuile sur deux ; tablette et ordinateur : en damier */
+.secteur:nth-child(even) {
+  background: var(--bleu-sombre);
+}
+
+@media (min-width: 48rem) {
+  .secteur:nth-child(even) {
+    background: var(--bleu);
+  }
+
+  .secteur:nth-child(4n + 2),
+  .secteur:nth-child(4n + 3) {
+    background: var(--bleu-sombre);
+  }
+}
+
+/* Le Markdown enveloppe l'illustration dans un paragraphe : on le neutralise */
+.secteur > p:has(> .illustration) {
+  display: contents;
+}
+
+.secteur .illustration {
+  position: absolute;
+  inset: var(--space-2) var(--space-2) 0 auto;
+  width: 70%;
+  height: calc(100% - var(--space-2));
+  fill: none;
+  stroke: var(--blanc);
+  stroke-opacity: 0.28;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.secteur h3 {
+  position: relative;
+  margin: 0 0 0.375rem;
+  font-size: var(--taille-intertitre);
+  color: var(--blanc);
+}
+
+.secteur > p:not(:has(> .illustration)) {
+  position: relative;
+  max-width: 20rem;
+  margin: 0;
+}
